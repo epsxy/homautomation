@@ -1,0 +1,13 @@
+[Unit]
+Description=Discord bot service
+After=network.target
+
+[Service]
+User=${USER}
+Restart=always
+Type=simple
+WorkingDirectory=/path/to/python/repo
+ExecStart=/path/to/pipenv run python3 -u /path/to/python/repo/bot.py
+
+[Install]
+WantedBy=multi-user.target

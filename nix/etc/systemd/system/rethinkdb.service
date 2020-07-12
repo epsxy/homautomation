@@ -1,0 +1,13 @@
+[Unit]
+Description=Rethinkdb service
+After=network.target
+
+[Service]
+User=${USER}
+Restart=always
+Type=simple
+WorkingDirectory=/home/${USER}
+ExecStart=/usr/local/bin/rethinkdb --bind all
+
+[Install]
+WantedBy=multi-user.target

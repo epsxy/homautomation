@@ -1,0 +1,14 @@
+<div>
+    <div *ngIf="canGraphBeDisplayed">
+        <canvas
+            baseChart
+            [datasets]="barChartData"
+            [labels]="barChartLabels"
+            [options]="barChartOptions"
+            [legend]="barChartLegend"
+            [chartType]="barChartType"
+        >
+        </canvas>
+    </div>
+  <app-line-chart></app-line-chart>
+</div>

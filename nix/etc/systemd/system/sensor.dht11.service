@@ -1,0 +1,13 @@
+[Unit]
+Description=DHT11 sensor service
+After=network.target
+
+[Service]
+User=${USER}
+Restart=always
+Type=simple
+WorkingDirectory=/path/to/python/repo
+ExecStart=/path/to/pipenv run python3 -u /path/to/python/repo/dht11.py
+
+[Install]
+WantedBy=multi-user.target
