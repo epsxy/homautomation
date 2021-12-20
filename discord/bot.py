@@ -2,6 +2,9 @@ import discord
 import os
 from rethinkdb import r
 from dotenv import load_dotenv
+import asyncio
+from threading import Thread
+import time
 
 load_dotenv(verbose=True)
 
@@ -98,5 +101,38 @@ async def on_message(message):
         await message.channel.purge(limit=100)
 
 
+async def door_supervisor():
+    while(True):
+        cursor = r.db('dashboard').table('doors').changes().run(conn)
+        for document in cursor:
+            if document['new_val']['opened'] is True:
+                formatted_value = 'opened'
+            else:
+                formatted_value = 'closed'
+            pattern = 'Door was {} ({}-{}-{} {}:{})'
+            channel = client.get_channel(734049980721135656)
+            await channel.send(pattern.format(
+               formatted_value,
+               document['new_val']['timestamp'].year,
+               document['new_val']['timestamp'].month,
+               document['new_val']['timestamp'].day,
+               document['new_val']['timestamp'].hour,
+               document['new_val']['timestamp'].minute
+            ))
+
+async def start():
+    await client.start(token) # use client.start instead of client.run
+
+def run_it_forever(loop):
+    loop.run_forever()
+
 if __name__ == '__main__':
-    client.run(token)
+    asyncio.get_child_watcher() # I still don't know if I need this method. It works without it.
+
+    loop = asyncio.get_event_loop()
+    loop.create_task(start())
+
+    thread = Thread(target=run_it_forever, args=(loop,))
+    thread.start()
+    time.sleep(3)
+    loop.create_task(door_supervisor())
